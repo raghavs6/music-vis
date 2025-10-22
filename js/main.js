@@ -24,6 +24,7 @@ audioFile.addEventListener("change", function(){
   if (file) {
     const fileURL = URL.createObjectURL(file);
     audio.src = fileURL;
+    setupAudioContext();
     
   }
 
@@ -51,3 +52,24 @@ pauseBtn.addEventListener("click", function() {
     audio.pause();
 
   });
+
+  // Step 5: Set up Web Audio API
+let audioContext;
+let analyser;
+let dataArray;
+let bufferLength;
+
+function setupAudioContext() {
+  audioContext = new AudioContext();
+  analyser = audioContext.createAnalyser();
+  analyser.fftSize = 256;
+  
+  bufferLength = analyser.frequencyBinCount;
+  dataArray = new Uint8Array(bufferLength);
+  
+  const source = audioContext.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(audioContext.destination);
+  
+  console.log("Web Audio API setup complete!");
+}
